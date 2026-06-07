@@ -1,0 +1,84 @@
+{
+  "payments_list": {
+    "data": [
+      {
+        "txnId": 11233344692,
+        "personId": 79161122331,
+        "date": "2017-08-30T14:38:09+03:00",
+        "errorCode": 0,
+        "error": null,
+        "status": "SUCCESS",
+        "type": "OUT",
+        "statusText": "Успешно",
+        "account": "79121112233",
+        "sum": { "amount": 1, "currency": 643 }
+      }
+    ],
+    "nextTxnId": null,
+    "nextTxnDate": null
+  },
+  "balance_accounts": {
+    "accounts": [
+      {
+        "alias": "qw_wallet_rub",
+        "fsAlias": "qb_wallet",
+        "bankAlias": "QIWI",
+        "title": "WALLET",
+        "type": { "id": "WALLET", "title": "QIWI Wallet" },
+        "hasBalance": true,
+        "balance": { "amount": 8.74, "currency": 643 },
+        "currency": 643
+      }
+    ]
+  },
+  "payment_created": {
+    "id": "1514296828893",
+    "terms": "99",
+    "fields": { "account": "+79261112233" },
+    "sum": { "amount": 1, "currency": "643" },
+    "source": "account_643",
+    "comment": "API test payment 1 RUB",
+    "transaction": {
+      "id": "11982501857",
+      "state": { "code": "Accepted" }
+    }
+  },
+  "transaction_success": {
+    "txnId": 11982501857,
+    "personId": 79161122331,
+    "date": "2017-08-30T14:38:09+03:00",
+    "errorCode": 0,
+    "error": null,
+    "status": "SUCCESS",
+    "type": "OUT",
+    "statusText": "Успешно",
+    "account": "+79261112233",
+    "sum": { "amount": 1, "currency": 643 },
+    "commission": { "amount": 0, "currency": 643 },
+    "total": { "amount": 1, "currency": 643 }
+  },
+  "error_unauthorized": {
+    "errorCode": 5,
+    "description": "Invalid authorization token"
+  },
+  "error_bad_wallet": {
+    "errorCode": 400,
+    "description": "Invalid wallet format"
+  },
+  "error_bad_request": {
+    "errorCode": 400,
+    "description": "Malformed request body"
+  },
+  "error_missing_fields": {
+    "errorCode": 400,
+    "description": "Required payment fields are missing"
+  },
+  "error_wrong_type": {
+    "errorCode": 400,
+    "description": "Field type mismatch: sum.amount must be a number"
+  },
+  "error_not_found": {
+    "errorCode": 404,
+    "description": "Transaction not found"
+  }
+}

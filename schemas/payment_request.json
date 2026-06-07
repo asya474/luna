@@ -1,0 +1,41 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "PaymentRequest",
+  "type": "object",
+  "required": ["id", "sum", "paymentMethod", "fields"],
+  "additionalProperties": true,
+  "properties": {
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 20
+    },
+    "sum": {
+      "type": "object",
+      "required": ["amount", "currency"],
+      "additionalProperties": false,
+      "properties": {
+        "amount": { "type": "number", "exclusiveMinimum": 0 },
+        "currency": { "type": "string", "pattern": "^[0-9]{3}$" }
+      }
+    },
+    "paymentMethod": {
+      "type": "object",
+      "required": ["type", "accountId"],
+      "additionalProperties": false,
+      "properties": {
+        "type": { "type": "string", "enum": ["Account"] },
+        "accountId": { "type": "string", "pattern": "^[0-9]{3}$" }
+      }
+    },
+    "fields": {
+      "type": "object",
+      "required": ["account"],
+      "additionalProperties": true,
+      "properties": {
+        "account": { "type": "string", "minLength": 1 }
+      }
+    },
+    "comment": { "type": "string" }
+  }
+}

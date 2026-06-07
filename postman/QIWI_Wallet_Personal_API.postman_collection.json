@@ -1,0 +1,204 @@
+{
+  "info": {
+    "_postman_id": "qiwi-wallet-personal-api",
+    "name": "QIWI Wallet Personal API",
+    "description": "Postman collection for QIWI Wallet Personal API test scenarios.\n\nBase URL: https://edge.qiwi.com\nAuth: Bearer token in Authorization header.\n\nVariables:\n- base_url\n- api_token\n- wallet (phone without +)\n- payment_recipient\n- transaction_id",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "https://edge.qiwi.com" },
+    { "key": "api_token", "value": "{{QIWI_API_TOKEN}}" },
+    { "key": "wallet", "value": "79991234567" },
+    { "key": "payment_recipient", "value": "+79997654321" },
+    { "key": "transaction_id", "value": "" },
+    { "key": "payment_id", "value": "" }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [{ "key": "token", "value": "{{api_token}}", "type": "string" }]
+  },
+  "item": [
+    {
+      "name": "Health & Profile",
+      "item": [
+        {
+          "name": "Get Payments (Service Health)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/payment-history/v2/persons/{{wallet}}/payments?rows=10",
+              "host": ["{{base_url}}"],
+              "path": ["payment-history", "v2", "persons", "{{wallet}}", "payments"],
+              "query": [{ "key": "rows", "value": "10" }]
+            },
+            "description": "Service availability probe. Expect 200 and JSON with data[] array."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/person-profile/v1/profile/current?authInfoEnabled=false&contractInfoEnabled=true",
+              "host": ["{{base_url}}"],
+              "path": ["person-profile", "v1", "profile", "current"],
+              "query": [
+                { "key": "authInfoEnabled", "value": "false" },
+                { "key": "contractInfoEnabled", "value": "true" }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Balance",
+      "item": [
+        {
+          "name": "Get Balance Accounts",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/funding-sources/v2/persons/{{wallet}}/accounts",
+              "host": ["{{base_url}}"],
+              "path": ["funding-sources", "v2", "persons", "{{wallet}}", "accounts"]
+            },
+            "description": "Returns accounts[]. Find alias=qw_wallet_rub and check balance.amount > 0."
+          },
+          "response": []
+        },
+        {
+          "name": "Get RUB Balance (with timeout)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/funding-sources/v2/persons/{{wallet}}/accounts?timeout=1000&alias=qw_wallet_rub",
+              "host": ["{{base_url}}"],
+              "path": ["funding-sources", "v2", "persons", "{{wallet}}", "accounts"],
+              "query": [
+                { "key": "timeout", "value": "1000" },
+                { "key": "alias", "value": "qw_wallet_rub" }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Payments",
+      "item": [
+        {
+          "name": "Create P2P Payment (1 RUB, provider 99)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "pm.collectionVariables.set('payment_id', String(Date.now()));"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.transaction && json.transaction.id) {",
+                  "  pm.collectionVariables.set('transaction_id', json.transaction.id);",
+                  "}",
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Payment accepted', () => pm.expect(json.transaction.state.code).to.eql('Accepted'));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "User-Agent", "value": "Android v3.2.0 MKT" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"{{payment_id}}\",\n  \"sum\": {\n    \"amount\": 1,\n    \"currency\": \"643\"\n  },\n  \"paymentMethod\": {\n    \"type\": \"Account\",\n    \"accountId\": \"643\"\n  },\n  \"comment\": \"Postman test payment 1 RUB\",\n  \"fields\": {\n    \"account\": \"{{payment_recipient}}\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/sinap/api/v2/terms/99/payments",
+              "host": ["{{base_url}}"],
+              "path": ["sinap", "api", "v2", "terms", "99", "payments"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Transaction Status (Execute verification)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Transaction not in ERROR', () => pm.expect(json.status).to.not.eql('ERROR'));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/payment-history/v2/transactions/{{transaction_id}}?type=OUT",
+              "host": ["{{base_url}}"],
+              "path": ["payment-history", "v2", "transactions", "{{transaction_id}}"],
+              "query": [{ "key": "type", "value": "OUT" }]
+            },
+            "description": "Verify final transaction status after payment acceptance."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Online Commission (provider 99)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"account\": \"{{payment_recipient}}\",\n  \"paymentMethod\": {\n    \"type\": \"Account\",\n    \"accountId\": \"643\"\n  },\n  \"purchaseTotals\": {\n    \"total\": {\n      \"amount\": 1,\n      \"currency\": \"643\"\n    }\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/sinap/providers/99/onlineCommission",
+              "host": ["{{base_url}}"],
+              "path": ["sinap", "providers", "99", "onlineCommission"]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

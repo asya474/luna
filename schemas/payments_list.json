@@ -1,0 +1,42 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "PaymentHistoryList",
+  "type": "object",
+  "required": ["data"],
+  "properties": {
+    "data": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["txnId", "date", "status", "type", "sum"],
+        "properties": {
+          "txnId": { "type": "integer" },
+          "personId": { "type": "integer" },
+          "date": { "type": "string" },
+          "errorCode": { "type": "integer" },
+          "error": { "type": ["string", "null"] },
+          "status": {
+            "type": "string",
+            "enum": ["WAITING", "SUCCESS", "ERROR"]
+          },
+          "type": {
+            "type": "string",
+            "enum": ["IN", "OUT", "QIWI_CARD"]
+          },
+          "statusText": { "type": "string" },
+          "account": { "type": "string" },
+          "sum": {
+            "type": "object",
+            "required": ["amount", "currency"],
+            "properties": {
+              "amount": { "type": "number" },
+              "currency": { "type": "integer" }
+            }
+          }
+        }
+      }
+    },
+    "nextTxnId": { "type": ["integer", "null"] },
+    "nextTxnDate": { "type": ["string", "null"] }
+  }
+}

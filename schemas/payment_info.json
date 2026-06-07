@@ -1,0 +1,41 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "PaymentInfo",
+  "type": "object",
+  "required": ["id", "terms", "fields", "sum", "transaction", "source"],
+  "properties": {
+    "id": { "type": ["string", "number"] },
+    "terms": { "type": "string" },
+    "fields": {
+      "type": "object",
+      "required": ["account"],
+      "properties": {
+        "account": { "type": "string" }
+      }
+    },
+    "sum": {
+      "type": "object",
+      "required": ["amount", "currency"],
+      "properties": {
+        "amount": { "type": "number" },
+        "currency": { "type": "string" }
+      }
+    },
+    "source": { "type": "string" },
+    "comment": { "type": "string" },
+    "transaction": {
+      "type": "object",
+      "required": ["id", "state"],
+      "properties": {
+        "id": { "type": ["string", "number"] },
+        "state": {
+          "type": "object",
+          "required": ["code"],
+          "properties": {
+            "code": { "type": "string", "enum": ["Accepted"] }
+          }
+        }
+      }
+    }
+  }
+}

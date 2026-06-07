@@ -1,0 +1,39 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "FundingSourcesAccounts",
+  "type": "object",
+  "required": ["accounts"],
+  "properties": {
+    "accounts": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["alias", "hasBalance", "currency", "type"],
+        "properties": {
+          "alias": { "type": "string" },
+          "fsAlias": { "type": "string" },
+          "bankAlias": { "type": "string" },
+          "title": { "type": "string" },
+          "hasBalance": { "type": "boolean" },
+          "currency": { "type": "integer" },
+          "type": {
+            "type": "object",
+            "required": ["id", "title"],
+            "properties": {
+              "id": { "type": "string" },
+              "title": { "type": "string" }
+            }
+          },
+          "balance": {
+            "type": ["object", "null"],
+            "properties": {
+              "amount": { "type": "number" },
+              "currency": { "type": "integer" }
+            }
+          }
+        }
+      }
+    }
+  }
+}

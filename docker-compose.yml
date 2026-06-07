@@ -1,0 +1,27 @@
+services:
+  qiwi-api-tests:
+    build: .
+    image: qiwi-wallet-api-tests:latest
+    environment:
+      QIWI_MOCK_MODE: "true"
+      QIWI_WALLET: "79991234567"
+      QIWI_API_TOKEN: mock-token
+    command: ["pytest", "-m", "not integration and not playwright", "-n", "auto", "-v"]
+
+  qiwi-api-tests-smoke:
+    build: .
+    image: qiwi-wallet-api-tests:latest
+    environment:
+      QIWI_MOCK_MODE: "true"
+      QIWI_WALLET: "79991234567"
+      QIWI_API_TOKEN: mock-token
+    command: ["pytest", "-m", "smoke", "-n", "auto", "-v"]
+
+  qiwi-api-tests-regression:
+    build: .
+    image: qiwi-wallet-api-tests:latest
+    environment:
+      QIWI_MOCK_MODE: "true"
+      QIWI_WALLET: "79991234567"
+      QIWI_API_TOKEN: mock-token
+    command: ["pytest", "-m", "regression and not integration", "-n", "auto", "-v"]

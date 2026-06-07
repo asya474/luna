@@ -1,0 +1,42 @@
+[project]
+name = "qiwi-wallet-api-tests"
+version = "1.0.0"
+description = "API test framework for QIWI Wallet Personal API"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "requests>=2.32.0",
+    "python-dotenv>=1.0.0",
+    "jsonschema>=4.23.0",
+    "pytest>=8.3.0",
+    "pytest-html>=4.1.0",
+    "pytest-xdist>=3.6.0",
+]
+
+[project.optional-dependencies]
+playwright = [
+    "pytest-playwright>=0.5.0",
+    "playwright>=1.49.0",
+]
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-ra --strict-markers --tb=short"
+# Parallel runs: pytest -n auto  (pytest-xdist; safe for mock/offline suites)
+markers = [
+    "integration: tests that call the real QIWI API (require credentials)",
+    "smoke: fast happy-path health-check scenarios",
+    "regression: negative scenarios and extended validation cases",
+    "e2e: end-to-end payment flow scenarios",
+    "playwright: browser-based documentation validation",
+    "mock: tests using recorded/mocked responses",
+]
+
+[build-system]
+requires = ["setuptools>=75.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["api*", "helpers*"]

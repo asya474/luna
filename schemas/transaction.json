@@ -1,0 +1,43 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Transaction",
+  "type": "object",
+  "required": ["txnId", "status", "type", "sum"],
+  "properties": {
+    "txnId": { "type": "integer" },
+    "personId": { "type": "integer" },
+    "date": { "type": "string" },
+    "status": {
+      "type": "string",
+      "enum": ["WAITING", "SUCCESS", "ERROR"]
+    },
+    "type": {
+      "type": "string",
+      "enum": ["IN", "OUT", "QIWI_CARD"]
+    },
+    "statusText": { "type": "string" },
+    "account": { "type": "string" },
+    "sum": {
+      "type": "object",
+      "required": ["amount", "currency"],
+      "properties": {
+        "amount": { "type": "number" },
+        "currency": { "type": "integer" }
+      }
+    },
+    "commission": {
+      "type": "object",
+      "properties": {
+        "amount": { "type": "number" },
+        "currency": { "type": "integer" }
+      }
+    },
+    "total": {
+      "type": "object",
+      "properties": {
+        "amount": { "type": "number" },
+        "currency": { "type": "integer" }
+      }
+    }
+  }
+}
